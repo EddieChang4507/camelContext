@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation=" http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd 
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context.xsd 
+	http://camel.apache.org/schema/spring 
+	http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+	<!-- camelContext設定內容 -->
+	<camelContext id="camel"
+		xmlns="http://camel.apache.org/schema/spring">
+		<threadPoolProfile id="defaultThreadPoolProfile"
+			defaultProfile="true" poolSize="50" maxPoolSize="200"
+			maxQueueSize="1000" allowCoreThreadTimeOut="false"
+			rejectedPolicy="CallerRuns" />
+		<restConfiguration scheme="http" component="restlet"
+			contextPath="/eddie" port="{{camel.port}}" enableCORS="true">
+		</restConfiguration>
+
+		<rest id="test001api" produces="application/json">
+			<post id="test001api" uri="/test001">
+				<description>test001</description>
+				<to uri="direct:test001" />
+			</post>
+		</rest>
+
+		<route id="test001Route">
+			<from id="test001From" uri="direct:test001" />
+			<bean id="test001Bean" ref="test001Service" method="test001" />
+		</route>
+	</camelContext>
+	
+	<bean id="test001"
+		class="com.eddie.service.impl.test001ServiceImpl" />
+	<bean id="test001Service"
+		class="com.eddie.service.impl.test001ServiceImpl" />
+
+</beans>

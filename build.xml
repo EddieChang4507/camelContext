@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build" name="camelContext">
+	<property name="jarName" value="restful" />
+	<property name="mainClass" value="com.eddie.CamelContextApplication" />
+	<property name="lib.dir" value="target/lib" />
+	<property name="src.dir" value="src" />
+	<property name="bin.dir" value="bin" />
+	<property name="output.dir" value="antCompiler" />
+	<property name="camel.context" value="./src/main/resources/spring" />
+	<property name="jarVersion" value="0.0.1-SNAPSHOT" />
+
+	<target name="clean">
+		<delete dir="${output.dir}">
+		</delete>
+	</target>
+
+	<path id="master-classPath">
+		<fileset dir="${lib.dir}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<pathconvert property="libs.project" pathsep=" ">
+		<mapper>
+			<chainedmapper>
+				<flattenmapper />
+				<globmapper from="*" to="lib/*" />
+			</chainedmapper>
+		</mapper>
+		<path>
+			<fileset dir="${lib.dir}">
+				<include name="**/*.jar" />
+			</fileset>
+		</path>
+	</pathconvert>
+
+	<target name="compile" depends="clean" description="Compile main source java files">
+		<echo message="start build">
+		</echo>
+		<mkdir dir="${output.dir}" />
+		<mkdir dir="${bin.dir}" />
+		<javac destdir="${bin.dir}" debug="true" encoding="UTF-8" deprecation="false" optimize="false" failonerror="true" includeantruntime="false">
+			<src path="${src.dir}">
+			</src>
+			<classpath refid="master-classPath">
+			</classpath>
+		</javac>
+		<echo message="successful build">
+		</echo>
+	</target>
+
+	<target name="build" depends="compile">
+		<jar filesetmanifest="mergewithoutmain" destfile="${output.dir}/${jarName}-${jarVersion}.jar">
+			<mappedresources>
+				<fileset dir="${bin.dir}/com/" />
+				<globmapper from="*" to="com/*" />
+			</mappedresources>
+			<!-- mappedresources>
+				<fileset dir="${camel.context}" />
+				<globmapper from="*" to="spring/*" />
+			</mappedresources -->
+
+			<manifest>
+				<attribute name="Main-Class" value="${mainClass}" />
+				<attribute name="Class-Path" value="${libs.project}" />
+				<attribute name="Build-Jdk-Spec" value="1.8" />
+			</manifest>
+		</jar>
+		<delete dir="${bin.dir}" />
+		<echo message="successful exportJar">
+		</echo>
+	</target>
+</project>
