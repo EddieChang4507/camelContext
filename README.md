@@ -1,6 +1,6 @@
 # camelContext
 
-# 將專案匯入 STS maven UPdate
+# 將專案匯入 STS 並且 maven UPdate
 
 # json匯入 postman
 
